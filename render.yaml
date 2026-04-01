@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: n8n-youtube-ai-factory
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    port: 5678
+    healthCheckPath: /healthz
+    envVars:
+      - key: N8N_HOST
+        value: 0.0.0.0
+      - key: N8N_PORT
+        value: 5678
+      - key: N8N_PROTOCOL
+        value: https
+      - key: N8N_BASIC_AUTH_ACTIVE
+        value: true
+      - key: N8N_BASIC_AUTH_USER
+        value: admin
+      - key: N8N_BASIC_AUTH_PASSWORD
+        generateValue: true
+      - key: WEBHOOK_URL
+        fromGroup: n8n-secrets
+      - key: OPENAI_API_KEY
+        fromGroup: n8n-secrets
+      - key: ELEVENLABS_API_KEY
+        fromGroup: n8n-secrets
+      - key: YOUTUBE_DATA_API_KEY
+        fromGroup: n8n-secrets
+      - key: PEXELS_API_KEY
+        fromGroup: n8n-secrets
+      - key: YOUTUBE_CLIENT_ID
+        fromGroup: n8n-secrets
+      - key: YOUTUBE_CLIENT_SECRET
+        fromGroup: n8n-secrets
+      - key: N8N_PUSH_BACKEND
+        value: websocket
+      - key: EXECUTIONS_DATA_PRUNE
+        value: true
+      - key: EXECUTIONS_DATA_MAX_AGE
+        value: 168
+      - key: GENERIC_TIMEZONE
+        value: Asia/Kolkata
+      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+        value: false
