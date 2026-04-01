@@ -1,0 +1,102 @@
+{
+  "id": "yt-ai-factory-analytics",
+  "name": "YouTube AI Factory (Analytics & Self-Improvement Loop)",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyDay",
+              "hour": 23,
+              "minute": 55
+            }
+          ]
+        }
+      },
+      "name": "Daily Analytics Cron",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "getAll",
+        "limit": 10,
+        "additionalFields": {
+          "sort": "viewCount"
+        }
+      },
+      "name": "Fetch Latest Videos",
+      "type": "n8n-nodes-base.youtube",
+      "typeVersion": 1,
+      "position": [400, 300],
+      "credentials": {
+        "youtubeOAuth2Api": {
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/youtube/v3/videoSnipet?id={{$json.id}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$env.YOUTUBE_DATA_API_KEY}}" }
+          ]
+        }
+      },
+      "name": "Fetch Analytics (Mocked)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "let ctr = Math.floor(Math.random() * 15) + 1; // Simulated CTR until connected to Analytics API\nlet views = items[0].json.statistics ? items[0].json.statistics.viewCount : 1500;\n\nitems[0].json.ctr = ctr;\nitems[0].json.views = views;\nreturn items;"
+      },
+      "name": "Calculate Performance",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const ctr = items[0].json.ctr;\n\nif (ctr > 8) {\n  return [{ json: { decision: \"Create similar videos\", strategy: \"Double down on this topic and title structure.\" } }];\n} else {\n  return [{ json: { decision: \"Change title + thumbnail\", strategy: \"Try using more aggressive Shock texts and high-contrast Pexels backgrounds.\" } }];\n}"
+      },
+      "name": "Self-Improvement Loop",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1000, 300]
+    },
+    {
+      "parameters": {
+        "command": "echo \"System Decision: {{$json.decision}} - {{$json.strategy}}\" > ai_directions.txt"
+      },
+      "name": "Save Director Instructions",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1200, 300]
+    }
+  ],
+  "connections": {
+    "Daily Analytics Cron": {
+      "main": [[{ "node": "Fetch Latest Videos", "type": "main", "index": 0 }]]
+    },
+    "Fetch Latest Videos": {
+      "main": [[{ "node": "Fetch Analytics (Mocked)", "type": "main", "index": 0 }]]
+    },
+    "Fetch Analytics (Mocked)": {
+      "main": [[{ "node": "Calculate Performance", "type": "main", "index": 0 }]]
+    },
+    "Calculate Performance": {
+      "main": [[{ "node": "Self-Improvement Loop", "type": "main", "index": 0 }]]
+    },
+    "Self-Improvement Loop": {
+      "main": [[{ "node": "Save Director Instructions", "type": "main", "index": 0 }]]
+    }
+  }
+}

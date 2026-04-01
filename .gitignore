@@ -1,0 +1,13 @@
+.env
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+node_modules/
+__pycache__/
+*.pyc
+test_thumb.jpg
+ai_directions.txt
+audio.mp3
+output.mp4
+current_thumb.jpg
+activate_workflows.py

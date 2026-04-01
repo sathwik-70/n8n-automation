@@ -1,0 +1,173 @@
+{
+  "id": "yt-ai-factory-main",
+  "name": "YouTube AI Factory (Endgame System - True AI Edition)",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 2,
+              "unit": "hours"
+            }
+          ]
+        }
+      },
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://trends.google.com/trends/trendingsearches/daily/rss?geo=IN",
+        "options": {}
+      },
+      "name": "Fetch Trends",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const topics = [\n  'AI replacing jobs in India 2025',\n  'Best AI tools to earn money online',\n  'Future of AI startups in India'\n];\nconst topic = topics[Math.floor(Math.random() * topics.length)];\nreturn [{ json: { topic: `How ${topic} is changing the future of AI and jobs` } }];"
+      },
+      "name": "Pick Topic",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.OPENAI_API_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": []
+        },
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a viral YouTube scriptwriter. Output ONLY valid JSON with keys: title (string, viral YouTube title using shock+specific+timeframe), script (string, 60-second script starting with Shock->Question->Promise hook, with curiosity loops, short sentences), thumbText (string, 3-word max high-shock thumbnail text).\"},\n    {\"role\": \"user\", \"content\": \"Topic: {{$json.topic}}\"}\n  ],\n  \"response_format\": {\"type\": \"json_object\"}\n}",
+        "options": {}
+      },
+      "name": "OpenAI Generate Script",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const raw = items[0].json.choices[0].message.content;\nconst parsed = JSON.parse(raw);\nreturn [{ json: {\n  title: parsed.title || 'This AI Trend Will Change Everything (2025)',\n  script: parsed.script || 'AI is changing everything...',\n  thumbText: parsed.thumbText || 'JOB LOSS'\n}}];"
+      },
+      "name": "Parse Script",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgDQGcFmaJcg",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key",
+              "value": "={{$env.ELEVENLABS_API_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "audio/mpeg"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"text\": \"{{$json.script}}\", \"model_id\": \"eleven_multilingual_v2\", \"voice_settings\": {\"stability\": 0.5, \"similarity_boost\": 0.75}}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "name": "ElevenLabs Voice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: {\n  title: items[0].json.title,\n  script: items[0].json.script,\n  thumbText: items[0].json.thumbText,\n  description: items[0].json.script + '\\n\\n🔥 Top AI tools to make money → link in description\\n\\n#AI #Jobs #Future #Money #Tech',\n  note: 'Voice audio generated. Video creation requires ffmpeg locally — run: ffmpeg -loop 1 -i thumbnail.jpg -i audio.mp3 -shortest -c:v libx264 -pix_fmt yuv420p output.mp4'\n}}];"
+      },
+      "name": "Prepare Metadata",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status&key={{$env.YOUTUBE_DATA_API_KEY}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"snippet\": {\n    \"title\": \"{{$json.title}}\",\n    \"description\": \"{{$json.description}}\",\n    \"tags\": [\"AI\", \"Jobs\", \"Future\", \"Money\", \"Tech\"],\n    \"categoryId\": \"28\"\n  },\n  \"status\": {\n    \"privacyStatus\": \"public\"\n  }\n}",
+        "options": {}
+      },
+      "name": "YouTube API Upload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1500, 300]
+    }
+  ],
+  "connections": {
+    "Cron": {
+      "main": [[{ "node": "Fetch Trends", "type": "main", "index": 0 }]]
+    },
+    "Fetch Trends": {
+      "main": [[{ "node": "Pick Topic", "type": "main", "index": 0 }]]
+    },
+    "Pick Topic": {
+      "main": [[{ "node": "OpenAI Generate Script", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Generate Script": {
+      "main": [[{ "node": "Parse Script", "type": "main", "index": 0 }]]
+    },
+    "Parse Script": {
+      "main": [[{ "node": "ElevenLabs Voice", "type": "main", "index": 0 }]]
+    },
+    "ElevenLabs Voice": {
+      "main": [[{ "node": "Prepare Metadata", "type": "main", "index": 0 }]]
+    },
+    "Prepare Metadata": {
+      "main": [[{ "node": "YouTube API Upload", "type": "main", "index": 0 }]]
+    }
+  }
+}
