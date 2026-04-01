@@ -19,27 +19,57 @@ services:
         value: admin
       - key: N8N_BASIC_AUTH_PASSWORD
         generateValue: true
-      - key: WEBHOOK_URL
-        fromGroup: n8n-secrets
-      - key: OPENAI_API_KEY
-        fromGroup: n8n-secrets
-      - key: ELEVENLABS_API_KEY
-        fromGroup: n8n-secrets
-      - key: YOUTUBE_DATA_API_KEY
-        fromGroup: n8n-secrets
-      - key: PEXELS_API_KEY
-        fromGroup: n8n-secrets
-      - key: YOUTUBE_CLIENT_ID
-        fromGroup: n8n-secrets
-      - key: YOUTUBE_CLIENT_SECRET
-        fromGroup: n8n-secrets
+      - key: GENERIC_TIMEZONE
+        value: Asia/Kolkata
       - key: N8N_PUSH_BACKEND
         value: websocket
       - key: EXECUTIONS_DATA_PRUNE
         value: true
       - key: EXECUTIONS_DATA_MAX_AGE
         value: 168
-      - key: GENERIC_TIMEZONE
-        value: Asia/Kolkata
       - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
         value: false
+      # PostgreSQL database connection (from Render's free Postgres)
+      - key: DB_TYPE
+        value: postgresdb
+      - key: DB_POSTGRESDB_HOST
+        fromDatabase:
+          name: n8n-db
+          property: host
+      - key: DB_POSTGRESDB_PORT
+        fromDatabase:
+          name: n8n-db
+          property: port
+      - key: DB_POSTGRESDB_DATABASE
+        fromDatabase:
+          name: n8n-db
+          property: database
+      - key: DB_POSTGRESDB_USER
+        fromDatabase:
+          name: n8n-db
+          property: user
+      - key: DB_POSTGRESDB_PASSWORD
+        fromDatabase:
+          name: n8n-db
+          property: password
+      # Your API keys
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: YOUTUBE_DATA_API_KEY
+        sync: false
+      - key: PEXELS_API_KEY
+        sync: false
+      - key: YOUTUBE_CLIENT_ID
+        sync: false
+      - key: YOUTUBE_CLIENT_SECRET
+        sync: false
+      - key: WEBHOOK_URL
+        sync: false
+
+databases:
+  - name: n8n-db
+    plan: free
+    databaseName: n8n
+    user: n8n
