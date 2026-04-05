@@ -82,7 +82,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgDQGcFmaJcg",
+        "url": "=https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgDQGcFmaJgB",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
