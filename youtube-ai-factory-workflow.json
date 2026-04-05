@@ -41,6 +41,7 @@
     },
     {
       "parameters": {
+        "method": "POST",
         "url": "https://api.openai.com/v1/chat/completions",
         "authentication": "none",
         "sendHeaders": true,
@@ -80,6 +81,7 @@
     },
     {
       "parameters": {
+        "method": "POST",
         "url": "=https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgDQGcFmaJcg",
         "sendHeaders": true,
         "headerParameters": {
@@ -125,6 +127,7 @@
     },
     {
       "parameters": {
+        "method": "POST",
         "url": "=https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status&key={{$env.YOUTUBE_DATA_API_KEY}}",
         "sendHeaders": true,
         "headerParameters": {
