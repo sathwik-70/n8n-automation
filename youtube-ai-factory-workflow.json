@@ -82,13 +82,13 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgDQGcFmaJgB",
+        "url": "https://api.deepgram.com/v1/speak?model=aura-asteria-en",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
-              "name": "xi-api-key",
-              "value": "={{$env.ELEVENLABS_API_KEY}}"
+              "name": "Authorization",
+              "value": "=Token {{$env.DEEPGRAM_API_KEY}}"
             },
             {
               "name": "Content-Type",
@@ -102,7 +102,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"text\": \"{{$json.script}}\", \"model_id\": \"eleven_multilingual_v2\", \"voice_settings\": {\"stability\": 0.5, \"similarity_boost\": 0.75}}",
+        "jsonBody": "={\"text\": \"{{$json.script}}\"}",
         "options": {
           "response": {
             "response": {
@@ -111,7 +111,7 @@
           }
         }
       },
-      "name": "ElevenLabs Voice",
+      "name": "Deepgram Voice",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [1100, 300]
@@ -163,9 +163,9 @@
       "main": [[{ "node": "Parse Script", "type": "main", "index": 0 }]]
     },
     "Parse Script": {
-      "main": [[{ "node": "ElevenLabs Voice", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Deepgram Voice", "type": "main", "index": 0 }]]
     },
-    "ElevenLabs Voice": {
+    "Deepgram Voice": {
       "main": [[{ "node": "Prepare Metadata", "type": "main", "index": 0 }]]
     },
     "Prepare Metadata": {

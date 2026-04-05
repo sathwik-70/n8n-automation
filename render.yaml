@@ -55,7 +55,7 @@ services:
       # Your API keys
       - key: NVIDIA_API_KEY
         sync: false
-      - key: ELEVENLABS_API_KEY
+      - key: DEEPGRAM_API_KEY
         sync: false
       - key: YOUTUBE_DATA_API_KEY
         sync: false
