@@ -50,8 +50,6 @@ services:
         fromDatabase:
           name: n8n-db
           property: password
-      - key: DB_POSTGRESDB_SSL
-        value: true
       # Your API keys
       - key: OPENAI_API_KEY
         sync: false

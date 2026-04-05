@@ -74,12 +74,21 @@
     },
     {
       "parameters": {
-        "command": "echo \"System Decision: {{$json.decision}} - {{$json.strategy}}\" > ai_directions.txt"
+        "fromEmail": "botmale01o@gmail.com",
+        "toEmail": "botmale01o@gmail.com",
+        "subject": "YouTube System Decision - AI Factory",
+        "text": "=System Decision: {{$json.decision}}\nStrategy: {{$json.strategy}}"
       },
-      "name": "Save Director Instructions",
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [1200, 300]
+      "name": "Save Director Instructions (Email)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 300],
+      "credentials": {
+        "smtp": {
+          "id": "",
+          "name": "botmale01o@gmail.com"
+        }
+      }
     }
   ],
   "connections": {
@@ -96,7 +105,7 @@
       "main": [[{ "node": "Self-Improvement Loop", "type": "main", "index": 0 }]]
     },
     "Self-Improvement Loop": {
-      "main": [[{ "node": "Save Director Instructions", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Save Director Instructions (Email)", "type": "main", "index": 0 }]]
     }
   }
 }
