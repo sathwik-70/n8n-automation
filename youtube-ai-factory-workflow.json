@@ -22,7 +22,7 @@
     },
     {
       "parameters": {
-        "url": "https://jsonplaceholder.typicode.com/posts/1",
+        "url": "https://trends.google.com/trending/rss?geo=IN",
         "options": {}
       },
       "name": "Fetch Trends",
