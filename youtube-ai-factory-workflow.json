@@ -22,7 +22,7 @@
     },
     {
       "parameters": {
-        "url": "https://trends.google.com/trending/rss?geo=IN",
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
         "options": {}
       },
       "name": "Fetch Trends",
