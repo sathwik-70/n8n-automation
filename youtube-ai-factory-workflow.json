@@ -42,14 +42,14 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.openai.com/v1/chat/completions",
+        "url": "https://integrate.api.nvidia.com/v1/chat/completions",
         "authentication": "none",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "Authorization",
-              "value": "=Bearer {{$env.OPENAI_API_KEY}}"
+              "value": "=Bearer {{$env.NVIDIA_API_KEY}}"
             },
             {
               "name": "Content-Type",
@@ -62,10 +62,10 @@
           "parameters": []
         },
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a viral YouTube scriptwriter. Output ONLY valid JSON with keys: title (string, viral YouTube title using shock+specific+timeframe), script (string, 60-second script starting with Shock->Question->Promise hook, with curiosity loops, short sentences), thumbText (string, 3-word max high-shock thumbnail text).\"},\n    {\"role\": \"user\", \"content\": \"Topic: {{$json.topic}}\"}\n  ],\n  \"response_format\": {\"type\": \"json_object\"}\n}",
+        "jsonBody": "={\n  \"model\": \"meta/llama-3.1-70b-instruct\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a viral YouTube scriptwriter. Output ONLY valid JSON with keys: title (string, viral YouTube title using shock+specific+timeframe), script (string, 60-second script starting with Shock->Question->Promise hook, with curiosity loops, short sentences), thumbText (string, 3-word max high-shock thumbnail text).\"},\n    {\"role\": \"user\", \"content\": \"Topic: {{$json.topic}}\"}\n  ],\n  \"response_format\": {\"type\": \"json_object\"}\n}",
         "options": {}
       },
-      "name": "OpenAI Generate Script",
+      "name": "NVIDIA Generate Script",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [700, 300]
@@ -157,9 +157,9 @@
       "main": [[{ "node": "Pick Topic", "type": "main", "index": 0 }]]
     },
     "Pick Topic": {
-      "main": [[{ "node": "OpenAI Generate Script", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "NVIDIA Generate Script", "type": "main", "index": 0 }]]
     },
-    "OpenAI Generate Script": {
+    "NVIDIA Generate Script": {
       "main": [[{ "node": "Parse Script", "type": "main", "index": 0 }]]
     },
     "Parse Script": {

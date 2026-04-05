@@ -53,7 +53,7 @@ services:
           name: n8n-db
           property: password
       # Your API keys
-      - key: OPENAI_API_KEY
+      - key: NVIDIA_API_KEY
         sync: false
       - key: ELEVENLABS_API_KEY
         sync: false
