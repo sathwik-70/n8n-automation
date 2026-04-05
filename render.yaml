@@ -4,7 +4,6 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     plan: free
-    port: 5678
     healthCheckPath: /healthz
     envVars:
       - key: N8N_HOST
