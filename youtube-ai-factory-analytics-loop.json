@@ -22,19 +22,27 @@
     },
     {
       "parameters": {
-        "resource": "video",
-        "operation": "getAll",
-        "limit": 10,
-        "additionalFields": {
-          "sort": "viewCount"
-        }
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "part", "value": "snippet" },
+            { "name": "forMine", "value": "true" },
+            { "name": "order", "value": "viewCount" },
+            { "name": "maxResults", "value": "10" },
+            { "name": "type", "value": "video" }
+          ]
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youtubeOAuth2Api"
       },
       "name": "Fetch Latest Videos",
-      "type": "n8n-nodes-base.youtube",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
       "position": [400, 300],
       "credentials": {
         "youtubeOAuth2Api": {
+          "id": "",
           "name": "YouTube account"
         }
       }
