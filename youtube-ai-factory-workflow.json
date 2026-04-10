@@ -62,7 +62,7 @@
           "parameters": []
         },
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"meta/llama-3.1-70b-instruct\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a viral YouTube scriptwriter. Output ONLY valid JSON with keys: title (string, viral YouTube title using shock+specific+timeframe), script (string, 60-second script starting with Shock->Question->Promise hook, with curiosity loops, short sentences), thumbText (string, 3-word max high-shock thumbnail text).\"},\n    {\"role\": \"user\", \"content\": \"Topic: {{$json.topic}}\"}\n  ],\n  \"response_format\": {\"type\": \"json_object\"}\n}",
+        "jsonBody": "={\"model\": \"meta/llama-3.1-70b-instruct\", \"messages\": [{\"role\": \"system\", \"content\": \"You are a viral YouTube scriptwriter. Output ONLY valid JSON with keys: title (string, viral YouTube title using shock+specific+timeframe), script (string, 60-second script starting with Shock->Question->Promise hook, with curiosity loops, short sentences), thumbText (string, 3-word max high-shock thumbnail text), keyword (string, one short keyword describing the video topic like AI, jobs, money, future).\"}, {\"role\": \"user\", \"content\": \"Topic: {{$json.topic}}\"}], \"response_format\": {\"type\": \"json_object\"}}",
         "options": {}
       },
       "name": "NVIDIA Generate Script",
@@ -72,7 +72,7 @@
     },
     {
       "parameters": {
-        "functionCode": "const raw = items[0].json.choices[0].message.content;\nconst parsed = JSON.parse(raw);\nreturn [{ json: {\n  title: parsed.title || 'This AI Trend Will Change Everything (2025)',\n  script: parsed.script || 'AI is changing everything...',\n  thumbText: parsed.thumbText || 'JOB LOSS'\n}}];"
+        "functionCode": "const raw = items[0].json.choices[0].message.content;\nconst parsed = JSON.parse(raw);\nreturn [{ json: {\n  title: parsed.title || 'This AI Trend Will Change Everything (2025)',\n  script: parsed.script || 'AI is changing everything...',\n  thumbText: parsed.thumbText || 'JOB LOSS',\n  keyword: parsed.keyword || 'artificial intelligence'\n}}];"
       },
       "name": "Parse Script",
       "type": "n8n-nodes-base.function",
@@ -118,7 +118,7 @@
     },
     {
       "parameters": {
-        "functionCode": "return [{ json: {\n  title: items[0].json.title,\n  script: items[0].json.script,\n  thumbText: items[0].json.thumbText,\n  description: items[0].json.script + '\\n\\n🔥 Top AI tools to make money → link in description\\n\\n#AI #Jobs #Future #Money #Tech',\n  note: 'Voice audio generated. Video creation requires ffmpeg locally — run: ffmpeg -loop 1 -i thumbnail.jpg -i audio.mp3 -shortest -c:v libx264 -pix_fmt yuv420p output.mp4'\n}}];"
+        "functionCode": "const meta = items[0].json;\nconst keyword = meta.keyword || 'artificial intelligence';\nreturn [{ json: {\n  title: meta.title,\n  script: meta.script,\n  thumbText: meta.thumbText,\n  keyword: keyword,\n  description: meta.script + '\\n\\n#AI #Jobs #Future #Money #Tech'\n}}];"
       },
       "name": "Prepare Metadata",
       "type": "n8n-nodes-base.function",
@@ -127,8 +127,52 @@
     },
     {
       "parameters": {
+        "url": "=https://api.pexels.com/videos/search?query={{$json.keyword}}&per_page=1&orientation=portrait",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{$env.PEXELS_API_KEY}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch Pexels Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1500, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const pexelsData = items[0].json;\nconst videos = pexelsData.videos;\nif (!videos || videos.length === 0) {\n  throw new Error('No Pexels videos found for this topic');\n}\nconst video = videos[0];\nconst videoFiles = video.video_files;\nconst mp4File = videoFiles.find(f => f.file_type === 'video/mp4' && f.quality === 'sd') || videoFiles[0];\nreturn [{ json: {\n  videoUrl: mp4File.link,\n  title: items[0].json.title,\n  description: items[0].json.description,\n  keyword: items[0].json.keyword\n}}];"
+      },
+      "name": "Parse Video URL",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1700, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$json.videoUrl}}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "name": "Download Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1900, 300]
+    },
+    {
+      "parameters": {
         "method": "POST",
-        "url": "https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status",
+        "url": "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "youtubeOAuth2Api",
         "sendHeaders": true,
@@ -137,18 +181,60 @@
             {
               "name": "Content-Type",
               "value": "application/json"
+            },
+            {
+              "name": "X-Upload-Content-Type",
+              "value": "video/mp4"
             }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ snippet: { title: $json.title, description: $json.description, tags: ['AI', 'Jobs', 'Future', 'Money', 'Tech'], categoryId: '28' }, status: { privacyStatus: 'public' } }) }}",
-        "options": {}
+        "jsonBody": "={{ JSON.stringify({ snippet: { title: $('Prepare Metadata').item.json.title, description: $('Prepare Metadata').item.json.description, tags: ['AI', 'Jobs', 'Future', 'Money', 'Tech'], categoryId: '28' }, status: { privacyStatus: 'public' } }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
       },
-      "name": "YouTube API Upload",
+      "name": "Get Upload URL",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [1500, 300]
+      "position": [2100, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const uploadUrl = items[0].json.headers.location;\nif (!uploadUrl) throw new Error('No upload URL returned from YouTube');\nreturn [{ json: { uploadUrl } }];"
+      },
+      "name": "Extract Upload URL",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [2300, 300]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{$json.uploadUrl}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "video/mp4"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "name": "Upload Video to YouTube",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2500, 300]
     }
   ],
   "connections": {
@@ -171,7 +257,22 @@
       "main": [[{ "node": "Prepare Metadata", "type": "main", "index": 0 }]]
     },
     "Prepare Metadata": {
-      "main": [[{ "node": "YouTube API Upload", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Fetch Pexels Video", "type": "main", "index": 0 }]]
+    },
+    "Fetch Pexels Video": {
+      "main": [[{ "node": "Parse Video URL", "type": "main", "index": 0 }]]
+    },
+    "Parse Video URL": {
+      "main": [[{ "node": "Download Video", "type": "main", "index": 0 }]]
+    },
+    "Download Video": {
+      "main": [[{ "node": "Get Upload URL", "type": "main", "index": 0 }]]
+    },
+    "Get Upload URL": {
+      "main": [[{ "node": "Extract Upload URL", "type": "main", "index": 0 }]]
+    },
+    "Extract Upload URL": {
+      "main": [[{ "node": "Upload Video to YouTube", "type": "main", "index": 0 }]]
     }
   }
 }
