@@ -97,9 +97,9 @@ for wf_file in workflows_to_upload:
         
         status, resp_headers, resp_body = make_request("POST", "/rest/workflows", data=wf_data, headers=auth_headers)
         if status == 200:
-            print(f"✅ Successfully uploaded '{wf_file}'")
+            print(f"[SUCCESS] Successfully uploaded '{wf_file}'")
         else:
-            print(f"❌ Failed to upload '{wf_file}'. Status {status}")
+            print(f"[ERROR] Failed to upload '{wf_file}'. Status {status}")
             print(f"Response: {resp_body}")
     except Exception as e:
         print(f"Error reading or uploading {wf_file}: {e}")
