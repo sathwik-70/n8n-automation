@@ -140,7 +140,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { snippet: { title: $json.title, description: $json.description, tags: ['AI', 'Jobs', 'Future', 'Money', 'Tech'], categoryId: '28' }, status: { privacyStatus: 'public' } } }}",
+        "jsonBody": "={{ JSON.stringify({ snippet: { title: $json.title, description: $json.description, tags: ['AI', 'Jobs', 'Future', 'Money', 'Tech'], categoryId: '28' }, status: { privacyStatus: 'public' } }) }}",
         "options": {}
       },
       "name": "YouTube API Upload",
