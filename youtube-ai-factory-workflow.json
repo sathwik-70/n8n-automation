@@ -128,7 +128,9 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status&key={{$env.YOUTUBE_DATA_API_KEY}}",
+        "url": "https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youtubeOAuth2Api",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
