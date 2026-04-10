@@ -49,17 +49,13 @@
     },
     {
       "parameters": {
-        "url": "=https://www.googleapis.com/youtube/v3/videoSnipet?id={{$json.id}}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "Authorization", "value": "Bearer {{$env.YOUTUBE_DATA_API_KEY}}" }
-          ]
-        }
+        "url": "=https://www.googleapis.com/youtube/v3/videos?part=statistics&id={{$json.id.videoId}}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youtubeOAuth2Api"
       },
-      "name": "Fetch Analytics (Mocked)",
+      "name": "Fetch Analytics",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 1,
+      "typeVersion": 4,
       "position": [600, 300]
     },
     {
@@ -104,9 +100,9 @@
       "main": [[{ "node": "Fetch Latest Videos", "type": "main", "index": 0 }]]
     },
     "Fetch Latest Videos": {
-      "main": [[{ "node": "Fetch Analytics (Mocked)", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Fetch Analytics", "type": "main", "index": 0 }]]
     },
-    "Fetch Analytics (Mocked)": {
+    "Fetch Analytics": {
       "main": [[{ "node": "Calculate Performance", "type": "main", "index": 0 }]]
     },
     "Calculate Performance": {
