@@ -14,3 +14,5 @@ COPY youtube-ai-factory-analytics-loop.json /home/node/
 
 USER node
 EXPOSE 5678
+
+CMD ["sh", "-c", "n8n import:workflow --separate --input=/home/node/youtube-ai-factory-workflow.json && n8n start"]
