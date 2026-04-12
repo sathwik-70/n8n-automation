@@ -29,9 +29,9 @@ services:
       - key: N8N_DEFAULT_BINARY_DATA_MODE
         value: filesystem
       - key: EXECUTIONS_DATA_PRUNE
-        value: true
+        value: "true"
       - key: EXECUTIONS_DATA_MAX_AGE
-        value: 168
+        value: "168"
       - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
         value: "false"
       - key: N8N_BLOCK_ENV_ACCESS_IN_NODE
@@ -65,17 +65,11 @@ services:
           property: password
       # Your API keys
       - key: NVIDIA_API_KEY
-        sync: false
       - key: DEEPGRAM_API_KEY
-        sync: false
       - key: YOUTUBE_DATA_API_KEY
-        sync: false
       - key: PEXELS_API_KEY
-        sync: false
       - key: YOUTUBE_CLIENT_ID
-        sync: false
       - key: YOUTUBE_CLIENT_SECRET
-        sync: false
       - key: WEBHOOK_URL
         value: https://n8n-youtube-ai-factory.onrender.com
 
