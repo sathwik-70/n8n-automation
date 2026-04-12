@@ -31,6 +31,8 @@ services:
         value: false
       - key: N8N_BLOCK_ENV_ACCESS_IN_NODE
         value: false
+      - key: NODE_FUNCTION_ALLOW_EXTERNAL
+        value: child_process,fs
       # PostgreSQL database connection (from Render's free Postgres)
       - key: DB_TYPE
         value: postgresdb

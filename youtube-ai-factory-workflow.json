@@ -197,10 +197,10 @@
     },
     {
       "parameters": {
-        "command": "ffmpeg -y -i /tmp/video.mp4 -i /tmp/audio.mp3 -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -shortest /tmp/output.mp4"
+        "jsCode": "const execSync = require('child_process').execSync;\ntry {\n  execSync('ffmpeg -y -i /tmp/video.mp4 -i /tmp/audio.mp3 -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -shortest /tmp/output.mp4');\n  return [{ json: { success: true } }];\n} catch (error) {\n  throw new Error(`FFmpeg error: ${error.message}`);\n}"
       },
-      "name": "FFmpeg Merge",
-      "type": "n8n-nodes-base.executeCommand",
+      "name": "FFmpeg Merge (Fixed)",
+      "type": "n8n-nodes-base.code",
       "typeVersion": 1,
       "position": [2550, 300]
     },
@@ -323,9 +323,9 @@
       "main": [[{ "node": "Wait for Both", "type": "main", "index": 1 }]]
     },
     "Wait for Both": {
-      "main": [[{ "node": "FFmpeg Merge", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "FFmpeg Merge (Fixed)", "type": "main", "index": 0 }]]
     },
-    "FFmpeg Merge": {
+    "FFmpeg Merge (Fixed)": {
       "main": [[{ "node": "Read Output File", "type": "main", "index": 0 }]]
     },
     "Read Output File": {
