@@ -21,6 +21,8 @@ services:
         value: Asia/Kolkata
       - key: N8N_PUSH_BACKEND
         value: websocket
+      - key: N8N_DEFAULT_BINARY_DATA_MODE
+        value: filesystem
       - key: EXECUTIONS_DATA_PRUNE
         value: true
       - key: EXECUTIONS_DATA_MAX_AGE

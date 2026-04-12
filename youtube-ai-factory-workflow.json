@@ -58,9 +58,6 @@
           ]
         },
         "sendBody": true,
-        "bodyParameters": {
-          "parameters": []
-        },
         "specifyBody": "json",
         "jsonBody": "={\"model\": \"meta/llama-3.1-70b-instruct\", \"messages\": [{\"role\": \"system\", \"content\": \"You are a viral YouTube scriptwriter. Output ONLY valid JSON with keys: title (string, viral YouTube title using shock+specific+timeframe), script (string, 60-second script starting with Shock->Question->Promise hook, with curiosity loops, short sentences), thumbText (string, 3-word max high-shock thumbnail text), keyword (string, one short keyword describing the video topic like AI, jobs, money, future).\"}, {\"role\": \"user\", \"content\": \"Topic: {{$json.topic}}\"}], \"response_format\": {\"type\": \"json_object\"}}",
         "options": {}
@@ -171,6 +168,45 @@
     },
     {
       "parameters": {
+        "fileName": "/tmp/video.mp4",
+        "dataPropertyName": "data"
+      },
+      "name": "Write Video to Disk",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [2100, 200]
+    },
+    {
+      "parameters": {
+        "fileName": "/tmp/audio.mp3",
+        "dataPropertyName": "data"
+      },
+      "name": "Write Audio to Disk",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [2300, 200]
+    },
+    {
+      "parameters": {
+        "command": "ffmpeg -y -i /tmp/video.mp4 -i /tmp/audio.mp3 -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -shortest /tmp/output.mp4"
+      },
+      "name": "FFmpeg Merge",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2500, 300]
+    },
+    {
+      "parameters": {
+        "filePath": "/tmp/output.mp4",
+        "dataPropertyName": "data"
+      },
+      "name": "Read Output File",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [2700, 300]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status",
         "authentication": "predefinedCredentialType",
@@ -202,7 +238,7 @@
       "name": "Get Upload URL",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [2100, 300]
+      "position": [2900, 300]
     },
     {
       "parameters": {
@@ -211,7 +247,7 @@
       "name": "Extract Upload URL",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [2300, 300]
+      "position": [3100, 300]
     },
     {
       "parameters": {
@@ -234,7 +270,7 @@
       "name": "Upload Video to YouTube",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [2500, 300]
+      "position": [3300, 300]
     }
   ],
   "connections": {
@@ -266,6 +302,18 @@
       "main": [[{ "node": "Download Video", "type": "main", "index": 0 }]]
     },
     "Download Video": {
+      "main": [[{ "node": "Write Video to Disk", "type": "main", "index": 0 }]]
+    },
+    "Write Video to Disk": {
+      "main": [[{ "node": "Write Audio to Disk", "type": "main", "index": 0 }]]
+    },
+    "Write Audio to Disk": {
+      "main": [[{ "node": "FFmpeg Merge", "type": "main", "index": 0 }]]
+    },
+    "FFmpeg Merge": {
+      "main": [[{ "node": "Read Output File", "type": "main", "index": 0 }]]
+    },
+    "Read Output File": {
       "main": [[{ "node": "Get Upload URL", "type": "main", "index": 0 }]]
     },
     "Get Upload URL": {
