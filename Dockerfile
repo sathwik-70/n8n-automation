@@ -14,7 +14,7 @@ COPY youtube-ai-factory-analytics-loop.json /home/node/
 
 COPY start.sh /home/node/
 USER root
-RUN chmod +x /home/node/start.sh
+RUN sed -i 's/\r$//' /home/node/start.sh && chmod +x /home/node/start.sh
 USER node
 EXPOSE 5678
 
