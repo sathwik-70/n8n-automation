@@ -13,6 +13,8 @@ services:
         value: https
       - key: N8N_ENCRYPTION_KEY
         generateValue: true
+      - key: N8N_USER_MANAGEMENT_DISABLED
+        value: "true"
       - key: N8N_BASIC_AUTH_ACTIVE
         value: "true"
       - key: N8N_BASIC_AUTH_USER
@@ -79,5 +81,5 @@ services:
 databases:
   - name: n8n-db
     plan: free
-    databaseName: n8n
+    databaseName: n8n_v1
     user: n8n
