@@ -8,7 +8,9 @@ FROM n8nio/n8n:latest
 COPY --from=ffmpeg-source /ffmpeg /usr/local/bin/
 COPY --from=ffmpeg-source /ffprobe /usr/local/bin/
 
-# Ensure the node user is correctly set
-USER node
+# Copy workflow files for automatic import
+COPY youtube-ai-factory-workflow.json /home/node/
+COPY youtube-ai-factory-analytics-loop.json /home/node/
 
+USER node
 EXPOSE 5678
