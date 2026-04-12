@@ -4,7 +4,7 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     plan: free
-    startCommand: n8n import:workflow --separate --input=/home/node/youtube-ai-factory-workflow.json && n8n start
+    startCommand: sh -c "n8n import:workflow --separate --input=/home/node/youtube-ai-factory-workflow.json && n8n start"
     envVars:
       - key: N8N_HOST
         value: 0.0.0.0
@@ -12,6 +12,10 @@ services:
         value: 5678
       - key: N8N_PROTOCOL
         value: https
+      - key: N8N_ENCRYPTION_KEY
+        generateValue: true
+      - key: N8N_USER_MANAGEMENT_DISABLED
+        value: true
       - key: N8N_BASIC_AUTH_ACTIVE
         value: true
       - key: N8N_BASIC_AUTH_USER
