@@ -12,7 +12,10 @@ COPY --from=ffmpeg-source /ffprobe /usr/local/bin/
 COPY youtube-ai-factory-workflow.json /home/node/
 COPY youtube-ai-factory-analytics-loop.json /home/node/
 
+COPY start.sh /home/node/
+USER root
+RUN chmod +x /home/node/start.sh
 USER node
 EXPOSE 5678
 
-CMD ["sh", "-c", "n8n import:workflow --separate --input=/home/node/youtube-ai-factory-workflow.json && n8n start"]
+CMD ["/home/node/start.sh"]
