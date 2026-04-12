@@ -168,7 +168,7 @@
     },
     {
       "parameters": {
-        "fileName": "/tmp/video.mp4",
+        "fileName": "video.mp4",
         "dataPropertyName": "data"
       },
       "name": "Write Video to Disk",
@@ -178,7 +178,7 @@
     },
     {
       "parameters": {
-        "fileName": "/tmp/audio.mp3",
+        "fileName": "audio.mp3",
         "dataPropertyName": "data"
       },
       "name": "Write Audio to Disk",
@@ -197,7 +197,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const execSync = require('child_process').execSync;\ntry {\n  execSync('ffmpeg -y -i /tmp/video.mp4 -i /tmp/audio.mp3 -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -shortest /tmp/output.mp4');\n  return [{ json: { success: true } }];\n} catch (error) {\n  throw new Error(`FFmpeg error: ${error.message}`);\n}"
+        "jsCode": "const execSync = require('child_process').execSync;\ntry {\n  execSync('ffmpeg -y -i video.mp4 -i audio.mp3 -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -shortest output.mp4');\n  return [{ json: { success: true } }];\n} catch (error) {\n  throw new Error(`FFmpeg error: ${error.message}`);\n}"
       },
       "name": "FFmpeg Merge (Fixed)",
       "type": "n8n-nodes-base.code",
@@ -206,7 +206,7 @@
     },
     {
       "parameters": {
-        "filePath": "/tmp/output.mp4",
+        "filePath": "output.mp4",
         "dataPropertyName": "data"
       },
       "name": "Read Output File",
