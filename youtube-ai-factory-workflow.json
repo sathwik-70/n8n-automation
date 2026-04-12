@@ -8,9 +8,7 @@
         "triggerTimes": {
           "item": [
             {
-              "mode": "everyX",
-              "value": 2,
-              "unit": "hours"
+              "mode": "everyX"
             }
           ]
         }
@@ -18,7 +16,11 @@
       "name": "Cron",
       "type": "n8n-nodes-base.cron",
       "typeVersion": 1,
-      "position": [100, 300]
+      "position": [
+        -1488,
+        -80
+      ],
+      "id": "c269b197-5d10-4eb2-b999-70bb4641b592"
     },
     {
       "parameters": {
@@ -28,7 +30,11 @@
       "name": "Fetch Trends",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [300, 300]
+      "position": [
+        -1296,
+        -80
+      ],
+      "id": "25cd12c9-7e4f-4364-bef3-ef030d07d9dd"
     },
     {
       "parameters": {
@@ -37,13 +43,16 @@
       "name": "Pick Topic",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [500, 300]
+      "position": [
+        -1088,
+        -80
+      ],
+      "id": "cec56e3e-1047-41e8-9db5-3ab77320c2f0"
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://integrate.api.nvidia.com/v1/chat/completions",
-        "authentication": "none",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -65,7 +74,11 @@
       "name": "NVIDIA Generate Script",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [700, 300]
+      "position": [
+        -896,
+        -80
+      ],
+      "id": "794c2021-9cc3-4bc6-ba73-a3a2e4da75dd"
     },
     {
       "parameters": {
@@ -74,7 +87,11 @@
       "name": "Parse Script",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [900, 300]
+      "position": [
+        -688,
+        -80
+      ],
+      "id": "dd570a7d-46aa-46ed-b4b2-931d5024d62d"
     },
     {
       "parameters": {
@@ -111,7 +128,11 @@
       "name": "Deepgram Voice",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [1100, 300]
+      "position": [
+        -496,
+        -80
+      ],
+      "id": "688309f8-9837-43ef-80fe-2f526e17b364"
     },
     {
       "parameters": {
@@ -120,7 +141,11 @@
       "name": "Prepare Metadata",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [1300, 300]
+      "position": [
+        -288,
+        -80
+      ],
+      "id": "6448f224-d0cf-40ff-a8df-14f13a8d2f59"
     },
     {
       "parameters": {
@@ -139,7 +164,11 @@
       "name": "Fetch Pexels Video",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [1500, 300]
+      "position": [
+        -96,
+        -80
+      ],
+      "id": "78e505ac-a3e6-4f70-af49-1f01951ded83"
     },
     {
       "parameters": {
@@ -148,7 +177,11 @@
       "name": "Parse Video URL",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [1700, 300]
+      "position": [
+        112,
+        -80
+      ],
+      "id": "94aa1414-1ba1-4cdc-8b67-dc3af671c2ef"
     },
     {
       "parameters": {
@@ -164,27 +197,39 @@
       "name": "Download Video",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [1900, 300]
+      "position": [
+        320,
+        -80
+      ],
+      "id": "f3ad13e3-4360-441a-8e0d-394fdb00aaff"
     },
     {
       "parameters": {
         "fileName": "/tmp/video.mp4",
-        "dataPropertyName": "data"
+        "options": {}
       },
       "name": "Write Video to Disk",
       "type": "n8n-nodes-base.writeBinaryFile",
       "typeVersion": 1,
-      "position": [2100, 200]
+      "position": [
+        512,
+        -176
+      ],
+      "id": "2ab29a21-c2e6-47ca-a413-17ee5abec021"
     },
     {
       "parameters": {
         "fileName": "/tmp/audio.mp3",
-        "dataPropertyName": "data"
+        "options": {}
       },
       "name": "Write Audio to Disk",
       "type": "n8n-nodes-base.writeBinaryFile",
       "typeVersion": 1,
-      "position": [2100, 450]
+      "position": [
+        512,
+        80
+      ],
+      "id": "1646c738-b1f1-4f66-b7c4-1f79682ff4d1"
     },
     {
       "parameters": {
@@ -193,7 +238,11 @@
       "name": "Wait for Both",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 1,
-      "position": [2350, 300]
+      "position": [
+        768,
+        -80
+      ],
+      "id": "48504477-529c-499b-9cfe-bc3d5b7fdbfd"
     },
     {
       "parameters": {
@@ -202,17 +251,24 @@
       "name": "FFmpeg Merge (Fixed)",
       "type": "n8n-nodes-base.code",
       "typeVersion": 1,
-      "position": [2550, 300]
+      "position": [
+        976,
+        -80
+      ],
+      "id": "3a5587b4-2b63-47ff-8331-0c3a7e37bda0"
     },
     {
       "parameters": {
-        "filePath": "/tmp/output.mp4",
-        "dataPropertyName": "data"
+        "filePath": "/tmp/output.mp4"
       },
       "name": "Read Output File",
       "type": "n8n-nodes-base.readBinaryFile",
       "typeVersion": 1,
-      "position": [2750, 300]
+      "position": [
+        1168,
+        -80
+      ],
+      "id": "b6de7b46-1305-4ac6-91ae-233e10cf384b"
     },
     {
       "parameters": {
@@ -247,7 +303,11 @@
       "name": "Get Upload URL",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [2950, 300]
+      "position": [
+        1376,
+        -80
+      ],
+      "id": "2c800e3b-4fa0-4a30-8ff8-14ae17fea2c3"
     },
     {
       "parameters": {
@@ -256,7 +316,11 @@
       "name": "Extract Upload URL",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [3150, 300]
+      "position": [
+        1568,
+        -80
+      ],
+      "id": "b5acf997-8f53-432e-8f9b-d77f84b618fa"
     },
     {
       "parameters": {
@@ -273,71 +337,210 @@
         },
         "sendBody": true,
         "specifyBody": "binaryData",
-        "inputDataFieldName": "data",
         "options": {}
       },
       "name": "Upload Video to YouTube",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [3350, 300]
+      "position": [
+        1776,
+        -80
+      ],
+      "id": "1187ec68-6f32-43d1-b950-8c5622987fa4"
     }
   ],
   "connections": {
     "Cron": {
-      "main": [[{ "node": "Fetch Trends", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Fetch Trends",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Fetch Trends": {
-      "main": [[{ "node": "Pick Topic", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Pick Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Pick Topic": {
-      "main": [[{ "node": "NVIDIA Generate Script", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "NVIDIA Generate Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "NVIDIA Generate Script": {
-      "main": [[{ "node": "Parse Script", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Parse Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Parse Script": {
-      "main": [[{ "node": "Deepgram Voice", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Deepgram Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Deepgram Voice": {
       "main": [
         [
-          { "node": "Prepare Metadata", "type": "main", "index": 0 },
-          { "node": "Write Audio to Disk", "type": "main", "index": 0 }
+          {
+            "node": "Prepare Metadata",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Write Audio to Disk",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Prepare Metadata": {
-      "main": [[{ "node": "Fetch Pexels Video", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Fetch Pexels Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Fetch Pexels Video": {
-      "main": [[{ "node": "Parse Video URL", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Parse Video URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Parse Video URL": {
-      "main": [[{ "node": "Download Video", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Download Video": {
-      "main": [[{ "node": "Write Video to Disk", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Write Video to Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Write Video to Disk": {
-      "main": [[{ "node": "Wait for Both", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Wait for Both",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Write Audio to Disk": {
-      "main": [[{ "node": "Wait for Both", "type": "main", "index": 1 }]]
+      "main": [
+        [
+          {
+            "node": "Wait for Both",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
     },
     "Wait for Both": {
-      "main": [[{ "node": "FFmpeg Merge (Fixed)", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "FFmpeg Merge (Fixed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "FFmpeg Merge (Fixed)": {
-      "main": [[{ "node": "Read Output File", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Read Output File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Read Output File": {
-      "main": [[{ "node": "Get Upload URL", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Get Upload URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Get Upload URL": {
-      "main": [[{ "node": "Extract Upload URL", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Extract Upload URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Extract Upload URL": {
-      "main": [[{ "node": "Upload Video to YouTube", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Upload Video to YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   }
 }
