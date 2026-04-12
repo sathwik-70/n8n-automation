@@ -34,7 +34,7 @@ services:
       - key: NODE_FUNCTION_ALLOW_EXTERNAL
         value: child_process,fs
       - key: N8N_RESTRICT_FILE_ACCESS_TO
-        value: /tmp/
+        value: /tmp/,/home/node/
       # PostgreSQL database connection (from Render's free Postgres)
       - key: DB_TYPE
         value: postgresdb
