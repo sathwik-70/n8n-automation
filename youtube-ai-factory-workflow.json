@@ -184,7 +184,16 @@
       "name": "Write Audio to Disk",
       "type": "n8n-nodes-base.writeBinaryFile",
       "typeVersion": 1,
-      "position": [2300, 200]
+      "position": [2100, 450]
+    },
+    {
+      "parameters": {
+        "mode": "wait"
+      },
+      "name": "Wait for Both",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 1,
+      "position": [2350, 300]
     },
     {
       "parameters": {
@@ -193,7 +202,7 @@
       "name": "FFmpeg Merge",
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2500, 300]
+      "position": [2550, 300]
     },
     {
       "parameters": {
@@ -203,7 +212,7 @@
       "name": "Read Output File",
       "type": "n8n-nodes-base.readBinaryFile",
       "typeVersion": 1,
-      "position": [2700, 300]
+      "position": [2750, 300]
     },
     {
       "parameters": {
@@ -238,7 +247,7 @@
       "name": "Get Upload URL",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [2900, 300]
+      "position": [2950, 300]
     },
     {
       "parameters": {
@@ -247,7 +256,7 @@
       "name": "Extract Upload URL",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [3100, 300]
+      "position": [3150, 300]
     },
     {
       "parameters": {
@@ -270,7 +279,7 @@
       "name": "Upload Video to YouTube",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [3300, 300]
+      "position": [3350, 300]
     }
   ],
   "connections": {
@@ -290,7 +299,10 @@
       "main": [[{ "node": "Deepgram Voice", "type": "main", "index": 0 }]]
     },
     "Deepgram Voice": {
-      "main": [[{ "node": "Prepare Metadata", "type": "main", "index": 0 }]]
+      "main": [
+        [{ "node": "Prepare Metadata", "type": "main", "index": 0 }],
+        [{ "node": "Write Audio to Disk", "type": "main", "index": 0 }]
+      ]
     },
     "Prepare Metadata": {
       "main": [[{ "node": "Fetch Pexels Video", "type": "main", "index": 0 }]]
@@ -305,9 +317,12 @@
       "main": [[{ "node": "Write Video to Disk", "type": "main", "index": 0 }]]
     },
     "Write Video to Disk": {
-      "main": [[{ "node": "Write Audio to Disk", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Wait for Both", "type": "main", "index": 0 }]]
     },
     "Write Audio to Disk": {
+      "main": [[{ "node": "Wait for Both", "type": "main", "index": 1 }]]
+    },
+    "Wait for Both": {
       "main": [[{ "node": "FFmpeg Merge", "type": "main", "index": 0 }]]
     },
     "FFmpeg Merge": {
