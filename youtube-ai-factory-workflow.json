@@ -300,8 +300,10 @@
     },
     "Deepgram Voice": {
       "main": [
-        [{ "node": "Prepare Metadata", "type": "main", "index": 0 }],
-        [{ "node": "Write Audio to Disk", "type": "main", "index": 0 }]
+        [
+          { "node": "Prepare Metadata", "type": "main", "index": 0 },
+          { "node": "Write Audio to Disk", "type": "main", "index": 0 }
+        ]
       ]
     },
     "Prepare Metadata": {
