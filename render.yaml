@@ -29,6 +29,10 @@ services:
         value: false
       - key: N8N_BLOCK_ENV_ACCESS_IN_NODE
         value: false
+      - key: N8N_RUNNERS_ENABLED
+        value: false
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=384
       # PostgreSQL database connection (from Render's free Postgres)
       - key: DB_TYPE
         value: postgresdb
