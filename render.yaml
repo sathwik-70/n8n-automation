@@ -11,12 +11,8 @@ services:
         value: 5678
       - key: N8N_PROTOCOL
         value: https
-      - key: N8N_ENCRYPTION_KEY
-        generateValue: true
-      - key: N8N_USER_MANAGEMENT_DISABLED
-        value: "true"
       - key: N8N_BASIC_AUTH_ACTIVE
-        value: "true"
+        value: true
       - key: N8N_BASIC_AUTH_USER
         value: admin
       - key: N8N_BASIC_AUTH_PASSWORD
@@ -25,20 +21,14 @@ services:
         value: Asia/Kolkata
       - key: N8N_PUSH_BACKEND
         value: websocket
-      - key: N8N_DEFAULT_BINARY_DATA_MODE
-        value: filesystem
       - key: EXECUTIONS_DATA_PRUNE
-        value: "true"
+        value: true
       - key: EXECUTIONS_DATA_MAX_AGE
-        value: "168"
+        value: 168
       - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
-        value: "false"
+        value: false
       - key: N8N_BLOCK_ENV_ACCESS_IN_NODE
-        value: "false"
-      - key: NODE_FUNCTION_ALLOW_EXTERNAL
-        value: child_process,fs
-      - key: N8N_RESTRICT_FILE_ACCESS_TO
-        value: ""
+        value: false
       # PostgreSQL database connection (from Render's free Postgres)
       - key: DB_TYPE
         value: postgresdb
@@ -64,17 +54,17 @@ services:
           property: password
       # Your API keys
       - key: NVIDIA_API_KEY
-        value: "REPLACE_ME"
+        sync: false
       - key: DEEPGRAM_API_KEY
-        value: "REPLACE_ME"
+        sync: false
       - key: YOUTUBE_DATA_API_KEY
-        value: "REPLACE_ME"
+        sync: false
       - key: PEXELS_API_KEY
-        value: "REPLACE_ME"
+        sync: false
       - key: YOUTUBE_CLIENT_ID
-        value: "REPLACE_ME"
+        sync: false
       - key: YOUTUBE_CLIENT_SECRET
-        value: "REPLACE_ME"
+        sync: false
       - key: WEBHOOK_URL
         value: https://n8n-youtube-ai-factory.onrender.com
 
