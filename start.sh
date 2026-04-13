@@ -12,4 +12,4 @@ n8n import:workflow --separate --input /home/node/workflows/ || echo "Import war
 
 # Start n8n
 echo "Starting n8n server..."
-n8n start
+exec n8n start
