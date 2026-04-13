@@ -1,5 +1,5 @@
 # ── Base: Standard Node.js (Debian Bullseye) ──────────────────────────────────
-FROM node:20-bullseye-slim
+FROM node:22-bullseye-slim
 
 # Switch to root to install system packages
 USER root
