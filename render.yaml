@@ -81,5 +81,5 @@ services:
 databases:
   - name: n8n-db
     plan: free
-    databaseName: n8n_v1
+    databaseName: n8n
     user: n8n
