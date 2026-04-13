@@ -4,9 +4,9 @@ FROM n8nio/n8n:latest
 # Switch to root to install system packages
 USER root
 
-# Install FFmpeg + Node.js dependencies for merge server
-# Alpine's package manager is apk
-RUN apk add --no-cache ffmpeg
+# Install FFmpeg + dependencies for merge server
+# n8nio/n8n:latest is Debian-based, so we use apt
+RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
 
 # Create app directory for merge server
 WORKDIR /merge
