@@ -172,7 +172,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://localhost:3000/merge",
+        "url": "http://localhost:8888/merge",
         "sendHeaders": false,
         "sendBody": true,
         "contentType": "multipart-form-data",

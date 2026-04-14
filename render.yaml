@@ -31,6 +31,8 @@ services:
         value: false
       - key: PORT
         value: 5678
+      - key: MERGE_SERVER_PORT
+        value: 8888
       - key: NODE_OPTIONS
         value: --max-old-space-size=384
       # PostgreSQL database connection (from Render's free Postgres)
