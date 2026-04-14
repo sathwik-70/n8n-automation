@@ -49,11 +49,10 @@ app.post('/merge', upload.fields([
      * -y                  → overwrite output file without asking
      */
     execSync(
-      `ffmpeg -i "${videoPath}" -i "${audioPath}" ` +
+      `ffmpeg -stream_loop -1 -i "${videoPath}" -i "${audioPath}" ` +
       `-map 0:v:0 -map 1:a:0 ` +
-      `-c:v libx264 -preset ultrafast -crf 26 -pix_fmt yuv420p ` +
-      `-c:a aac -b:a 128k ` +
-      `-shortest -movflags +faststart ` +
+      `-c:v copy -c:a aac -b:a 128k ` +
+      `-shortest -movflags +faststart -fflags +genpts ` +
       `-y "${outPath}"`,
       { stdio: 'pipe', timeout: 120_000 }
     );
