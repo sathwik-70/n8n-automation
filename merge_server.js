@@ -51,7 +51,8 @@ app.post('/merge', upload.fields([
     execSync(
       `ffmpeg -i "${videoPath}" -i "${audioPath}" ` +
       `-map 0:v:0 -map 1:a:0 ` +
-      `-c:v copy -c:a aac -b:a 128k ` +
+      `-c:v libx264 -preset ultrafast -crf 26 -pix_fmt yuv420p ` +
+      `-c:a aac -b:a 128k ` +
       `-shortest -movflags +faststart ` +
       `-y "${outPath}"`,
       { stdio: 'pipe', timeout: 120_000 }
