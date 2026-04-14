@@ -8,7 +8,7 @@ services:
       - key: N8N_HOST
         value: 0.0.0.0
       - key: N8N_PORT
-        value: 5678
+        value: 10000
       - key: N8N_PROTOCOL
         value: https
       - key: N8N_BASIC_AUTH_ACTIVE
@@ -30,9 +30,7 @@ services:
       - key: N8N_BLOCK_ENV_ACCESS_IN_NODE
         value: false
       - key: PORT
-        value: 5678
-      - key: MERGE_SERVER_PORT
-        value: 8888
+        value: 10000
       - key: NODE_OPTIONS
         value: --max-old-space-size=384
       # PostgreSQL database connection (from Render's free Postgres)
