@@ -48,11 +48,18 @@ app.post('/merge', upload.fields([
      * -movflags +faststart → put MOOV atom at front (better YouTube ingestion)
      * -y                  → overwrite output file without asking
      */
+    // Generate concat list to safely loop video without breaking timestamps
+    const listPath = `/tmp/list_${id}.txt`;
+    const loops = 10; // 10 loops of a 15s video = 150s (plenty for a 60s script)
+    let listContent = '';
+    for(let i=0; i<loops; i++) listContent += `file '${videoPath}'\n`;
+    fs.writeFileSync(listPath, listContent);
+
     execSync(
-      `ffmpeg -stream_loop -1 -i "${videoPath}" -i "${audioPath}" ` +
+      `ffmpeg -f concat -safe 0 -i "${listPath}" -i "${audioPath}" ` +
       `-map 0:v:0 -map 1:a:0 ` +
       `-c:v copy -c:a aac -b:a 128k ` +
-      `-shortest -movflags +faststart -fflags +genpts ` +
+      `-shortest -movflags +faststart ` +
       `-y "${outPath}"`,
       { stdio: 'pipe', timeout: 120_000 }
     );
@@ -68,7 +75,7 @@ app.post('/merge', upload.fields([
     res.status(500).json({ error: 'FFmpeg merge failed.', detail: err.message });
   } finally {
     // Clean up temp files
-    [videoPath, audioPath, outPath].forEach(f => {
+    [videoPath, audioPath, outPath, `/tmp/list_${id}.txt`].forEach(f => {
       try { if (f) fs.unlinkSync(f); } catch (_) {}
     });
   }
