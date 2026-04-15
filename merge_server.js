@@ -29,7 +29,7 @@ app.post('/merge', upload.fields([
   const id        = randomUUID();
   const videoPath = req.files?.video?.[0]?.path;
   const audioPath = req.files?.audio?.[0]?.path;
-  const outPath   = `/tmp/merged_${id}.mp4`;
+  const outPath   = `/tmp/merged_${id}.mkv`;
 
   if (!videoPath || !audioPath) {
     return res.status(400).json({ error: 'Both video and audio fields are required.' });
@@ -59,15 +59,15 @@ app.post('/merge', upload.fields([
       `ffmpeg -f concat -safe 0 -i "${listPath}" -i "${audioPath}" ` +
       `-map 0:v:0 -map 1:a:0 ` +
       `-c:v copy -c:a aac -b:a 128k ` +
-      `-shortest -movflags +faststart ` +
+      `-shortest ` +
       `-y "${outPath}"`,
       { stdio: 'pipe', timeout: 120_000 }
     );
 
     // Stream merged file back to n8n
     const merged = fs.readFileSync(outPath);
-    res.set('Content-Type', 'video/mp4');
-    res.set('Content-Disposition', `attachment; filename="merged_${id}.mp4"`);
+    res.set('Content-Type', 'video/x-matroska');
+    res.set('Content-Disposition', `attachment; filename="merged_${id}.mkv"`);
     res.send(merged);
 
   } catch (err) {
