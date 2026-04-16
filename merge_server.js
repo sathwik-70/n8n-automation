@@ -1,25 +1,22 @@
 /**
  * merge_server.js
- * Lightweight Express server that merges a video file and an audio file
- * using FFmpeg, then returns the merged MP4 as a binary response.
- *
- * Called by n8n via HTTP POST to http://localhost:3000/merge
- * Body: multipart/form-data with fields:
- *   - video: the raw video binary (from Pexels download)
- *   - audio: the raw audio binary (from Deepgram)
+ * Hybrid Transcode + Stream Copy FFmpeg Server
+ * 
+ * FIX FOR YOUTUBE "PROCESSING" HANGS:
+ * We first transcode the single Pexels clip (15s) to a pristine MPEG-TS file, standardizing 
+ * the framerate and completely wiping corrupted Video/Audio timestamps.
+ * THEN we use zero-cpu stream copy to concatenate that pristine TS file 15 times, 
+ * multiplexing it with the Deepgram audio into a final MP4 +faststart.
  */
 
 const express = require('express');
 const multer  = require('multer');
 const { execSync } = require('child_process');
 const fs = require('fs');
-const path = require('path');
 const { randomUUID } = require('crypto');
 
 const app  = express();
 const PORT = process.env.MERGE_SERVER_PORT || 3000;
-
-// Store uploads in /tmp (ephemeral, fine for Render free tier)
 const upload = multer({ dest: '/tmp/' });
 
 app.post('/merge', upload.fields([
@@ -29,60 +26,57 @@ app.post('/merge', upload.fields([
   const id        = randomUUID();
   const videoPath = req.files?.video?.[0]?.path;
   const audioPath = req.files?.audio?.[0]?.path;
-  const outPath   = `/tmp/merged_${id}.mkv`;
+  const tempTsPath = `/tmp/temp_${id}.ts`;
+  const listPath  = `/tmp/list_${id}.txt`;
+  let outPath     = `/tmp/merged_${id}.mp4`;
 
   if (!videoPath || !audioPath) {
-    return res.status(400).json({ error: 'Both video and audio fields are required.' });
+    return res.status(400).json({ error: 'Missing video or audio' });
   }
 
   try {
-    /**
-     * FFmpeg command breakdown:
-     * -i videoPath        → input video (silent Pexels clip)
-     * -i audioPath        → input audio (Deepgram MP3/WAV)
-     * -map 0:v:0          → take video stream from first input
-     * -map 1:a:0          → take audio stream from second input
-     * -c:v copy           → do NOT re-encode video (fast, no quality loss)
-     * -c:a aac            → encode audio to AAC (YouTube-compatible)
-     * -shortest           → trim to the shorter of video/audio
-     * -movflags +faststart → put MOOV atom at front (better YouTube ingestion)
-     * -y                  → overwrite output file without asking
-     */
-    // Generate concat list to safely loop video without breaking timestamps
-    const listPath = `/tmp/list_${id}.txt`;
-    const loops = 10; // 10 loops of a 15s video = 150s (plenty for a 60s script)
+    console.log(`[${id}] Step 1: Transcoding 15s Pexels loop to clean MPEG-TS...`);
+    // Scale to standard 720p Shorts, force 30fps, write to TS segment.
+    // This is computationally small because the source video is only ~15 seconds.
+    execSync(`ffmpeg -i "${videoPath}" -vf "scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280" -r 30 -c:v libx264 -preset ultrafast -crf 28 -f mpegts -y "${tempTsPath}"`, { stdio: 'pipe' });
+
+    console.log(`[${id}] Step 2: Generating concatenation list...`);
     let listContent = '';
-    for(let i=0; i<loops; i++) listContent += `file '${videoPath}'\n`;
+    // Loop 15 times (15 * 15s = 3.75 minutes max support)
+    for(let i=0; i<15; i++) {
+        listContent += `file '${tempTsPath}'\n`;
+    }
     fs.writeFileSync(listPath, listContent);
 
+    console.log(`[${id}] Step 3: Concatenating TS and multiplexing audio...`);
+    // Stream copy the video (0% CPU impact) and only encode the Deepgram audio, trim to shortest.
     execSync(
       `ffmpeg -f concat -safe 0 -i "${listPath}" -i "${audioPath}" ` +
       `-map 0:v:0 -map 1:a:0 ` +
       `-c:v copy -c:a aac -b:a 128k ` +
-      `-shortest ` +
-      `-y "${outPath}"`,
+      `-shortest -movflags +faststart -y "${outPath}"`,
       { stdio: 'pipe', timeout: 120_000 }
     );
 
-    // Stream merged file back to n8n
+    console.log(`[${id}] Success! Sending pristine MP4 stream to n8n.`);
     const merged = fs.readFileSync(outPath);
-    res.set('Content-Type', 'video/x-matroska');
-    res.set('Content-Disposition', `attachment; filename="merged_${id}.mkv"`);
+    res.set('Content-Type', 'video/mp4');
+    res.set('Content-Disposition', `attachment; filename="merged_${id}.mp4"`);
     res.send(merged);
 
   } catch (err) {
-    console.error('[merge_server] FFmpeg error:', err.stderr?.toString() || err.message);
-    res.status(500).json({ error: 'FFmpeg merge failed.', detail: err.message });
+    console.error(`[${id}] FFmpeg error:`, err.stderr?.toString() || err.message);
+    res.status(500).json({ error: 'FFmpeg failed', detail: err.message });
   } finally {
-    // Clean up temp files
-    [videoPath, audioPath, outPath, `/tmp/list_${id}.txt`].forEach(f => {
-      try { if (f) fs.unlinkSync(f); } catch (_) {}
+    console.log(`[${id}] Cleaning up temporary assets.`);
+    [videoPath, audioPath, tempTsPath, listPath, outPath].forEach(f => {
+      try { if (f && fs.existsSync(f)) fs.unlinkSync(f); } catch (_) {}
     });
   }
 });
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-app.listen(PORT, () => {
+app.listen(PORT, 10000, () => {
   console.log(`[merge_server] Running on port ${PORT}`);
 });
